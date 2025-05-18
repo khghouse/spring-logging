@@ -4,6 +4,10 @@ POST {{domain}}/api/v1/tasks
 Content-Type: application/json
 
 {
-  "title" : "할 일 등록 기능 개발",
-  "description" : "로깅 환경 구축 전, CRUD 기능 구현"
+  "title": "할 일 등록 기능 개발",
+  "description": "로깅 환경 구축 전, CRUD 기능 구현"
 }
+
+### 할 일 1건 조회
+GET {{domain}}/api/v1/tasks/1
+Content-Type: application/json

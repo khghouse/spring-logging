@@ -17,5 +17,12 @@ public class TaskService {
         Task task = taskRepository.save(request.toEntity());
         return TaskResponse.of(task);
     }
-    
+
+    public TaskResponse get(Long id) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("할 일 정보가 존재하지 않습니다."));
+
+        return TaskResponse.of(task);
+    }
+
 }
