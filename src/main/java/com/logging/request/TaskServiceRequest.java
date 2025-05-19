@@ -14,13 +14,16 @@ public class TaskServiceRequest {
 
     private String description;
 
+    private Boolean completed;
+
     @Builder(access = AccessLevel.PRIVATE)
-    private TaskServiceRequest(String title, String description) {
+    private TaskServiceRequest(String title, String description, Boolean completed) {
         this.title = title;
         this.description = description;
+        this.completed = completed;
     }
 
-    public Task toEntity() {
+    public Task toPersistEntity() {
         return Task.builder()
                 .title(title)
                 .description(description)
@@ -32,6 +35,14 @@ public class TaskServiceRequest {
         return TaskServiceRequest.builder()
                 .title(title)
                 .description(description)
+                .build();
+    }
+
+    public static TaskServiceRequest of(String title, String description, Boolean completed) {
+        return TaskServiceRequest.builder()
+                .title(title)
+                .description(description)
+                .completed(completed)
                 .build();
     }
 

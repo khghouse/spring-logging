@@ -31,4 +31,10 @@ public class Task extends BaseEntity {
         this.completed = completed;
     }
 
+    public void update(String title, String description, Boolean completed) {
+        this.title = title != null ? title : this.title;
+        this.description = description != null ? description : this.description;
+        this.completed = completed != null ? completed : this.completed;
+    }
+
 }
