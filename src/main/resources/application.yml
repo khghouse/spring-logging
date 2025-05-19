@@ -14,7 +14,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
@@ -28,7 +28,8 @@ logging:
   level:
     root: INFO
     org.hibernate.SQL: DEBUG # SQL 쿼리문 로그 출력
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE # 바인딩 파라미터 로그 출력
+    org.hibernate.orm.jdbc.bind: TRACE # 바인딩 파라미터 로그 출력 (Hibernate 6.x (Spring Boot 3.x부터))
+    # org.hibernate.type.descriptor.sql.BasicBinder: TRACE # 바인딩 파라미터 로그 출력 Hibernate 5.x (Spring Boot 2.x까지)
 
 --- # local
 
@@ -58,4 +59,5 @@ spring:
 logging:
   level:
     org.hibernate.SQL: INFO # SQL 쿼리문 로그 출력 안 함
-    org.hibernate.type.descriptor.sql.BasicBinder: OFF # 바인딩 파라미터 로그 출력 안 함
+    org.hibernate.orm.jdbc.bind: off # 바인딩 파라미터 로그 출력 (Hibernate 6.x (Spring Boot 3.x부터))
+    # org.hibernate.type.descriptor.sql.BasicBinder: off # 바인딩 파라미터 로그 출력 Hibernate 5.x (Spring Boot 2.x까지)
