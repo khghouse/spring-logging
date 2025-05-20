@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import static com.logging.enumeration.ErrorCode.ALREADY_DELETED;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -23,18 +25,28 @@ public class Task extends BaseEntity {
 
     private Boolean completed;
 
+    private Boolean deleted;
+
     @Builder
-    private Task(Long id, String title, String description, Boolean completed) {
+    private Task(Long id, String title, String description, Boolean completed, Boolean deleted) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.completed = completed;
+        this.deleted = deleted;
     }
 
     public void update(String title, String description, Boolean completed) {
         this.title = title != null ? title : this.title;
         this.description = description != null ? description : this.description;
         this.completed = completed != null ? completed : this.completed;
+    }
+
+    public void delete() {
+        if (this.deleted) {
+            throw new IllegalArgumentException(ALREADY_DELETED.getMessage());
+        }
+        this.deleted = true;
     }
 
 }

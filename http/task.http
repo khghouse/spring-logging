@@ -19,14 +19,10 @@ Content-Type: application/json
 {
   "id": 1,
   "title": "할 일 등록 기능 개발",
-  "description": "로깅 환경 구축 전, CRUD 기능 구현 - 수정 기능도 구현"
+  "description": "로깅 환경 구축 전, CRUD 기능 구현 - 수정 기능도 구현",
+  "completed": false
 }
 
-### 할 일 수정2
-PUT {{domain}}/api/v1/tasks/1
+### 할 일 삭제
+DELETE {{domain}}/api/v1/tasks/1
 Content-Type: application/json
-
-{
-  "id": 1,
-  "completed": true
-}

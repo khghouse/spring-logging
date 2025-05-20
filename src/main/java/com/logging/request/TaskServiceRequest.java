@@ -28,6 +28,7 @@ public class TaskServiceRequest {
                 .title(title)
                 .description(description)
                 .completed(false)
+                .deleted(false)
                 .build();
     }
 
