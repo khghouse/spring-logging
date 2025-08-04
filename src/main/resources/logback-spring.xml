@@ -25,8 +25,8 @@
         <logger name="org.hibernate.orm.jdbc.bind" level="TRACE"/>
     </springProfile>
 
-    <!-- Spring Profile: dev -->
-    <springProfile name="dev">
+    <!-- Spring Profile: dev,prod -->
+    <springProfile name="dev,prod">
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
             <encoder>
                 <!-- 콘솔 로그 패턴 정의 -->
