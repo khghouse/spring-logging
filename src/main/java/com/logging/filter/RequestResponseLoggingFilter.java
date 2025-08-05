@@ -8,7 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
@@ -19,8 +19,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * HTTP 요청 및 응답의 바디와 파라미터를 로깅하는 필터입니다.
+ * 로컬, 개발, 테스트 환경에서는 전체 요청/응답을 로깅하며,
+ * 운영 환경에서는 예외 발생 시에만 로깅합니다.
+ */
 @Slf4j
-@Component
 public abstract class RequestResponseLoggingFilter extends OncePerRequestFilter {
 
     private static final Set<String> MASKING_FIELDS = Set.of("description");
@@ -59,9 +63,9 @@ public abstract class RequestResponseLoggingFilter extends OncePerRequestFilter 
         String prettyBody = toPrettyJson(body);
 
         if (prettyBody.isEmpty()) {
-            log.info(">>> [HTTP Request] {} {}", request.getMethod(), request.getRequestURI());
+            log.info(">>> {} {}", request.getMethod(), request.getRequestURI());
         } else {
-            log.info(">>> [HTTP Request] {} {}\n{}", request.getMethod(), request.getRequestURI(), prettyBody);
+            log.info(">>> {} {}\n{}", request.getMethod(), request.getRequestURI(), prettyBody);
         }
     }
 
@@ -70,10 +74,11 @@ public abstract class RequestResponseLoggingFilter extends OncePerRequestFilter 
         String prettyBody = toPrettyJson(body);
 
         if (prettyBody.isEmpty()) {
-            log.info("<<< [HTTP Response] {}", response.getStatus());
+            log.info("<<< {}", HttpStatus.valueOf(response.getStatus()));
         } else {
-            log.info("<<< [HTTP Response] {}\n{}", response.getStatus(), prettyBody);
+            log.info("<<< {}\n{}", HttpStatus.valueOf(response.getStatus()), prettyBody);
         }
+
     }
 
     private String toPrettyJson(String json) {
