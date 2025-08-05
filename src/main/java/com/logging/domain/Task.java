@@ -1,5 +1,6 @@
 package com.logging.domain;
 
+import com.logging.exception.NotFoundException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -44,7 +45,7 @@ public class Task extends BaseEntity {
 
     public void delete() {
         if (this.deleted) {
-            throw new IllegalArgumentException(ALREADY_DELETED.getMessage());
+            throw new NotFoundException(ALREADY_DELETED);
         }
         this.deleted = true;
     }

@@ -1,6 +1,7 @@
 package com.logging.service;
 
 import com.logging.domain.Task;
+import com.logging.exception.NotFoundException;
 import com.logging.repository.TaskRepository;
 import com.logging.request.TaskServiceRequest;
 import com.logging.response.TaskResponse;
@@ -38,13 +39,13 @@ public class TaskService {
     @Transactional
     public void delete(Long id) {
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException(TASK_NOT_FOUND.getMessage()));
+                .orElseThrow(() -> new NotFoundException(TASK_NOT_FOUND));
         task.delete();
     }
 
     private Task findValidTask(Long id) {
         return taskRepository.findByIdAndDeletedFalse(id)
-                .orElseThrow(() -> new IllegalArgumentException(TASK_NOT_FOUND.getMessage()));
+                .orElseThrow(() -> new NotFoundException(TASK_NOT_FOUND));
     }
 
 }
