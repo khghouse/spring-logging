@@ -1,7 +1,7 @@
 package com.logging.handler;
 
 import com.logging.exception.NotFoundException;
-import com.logging.response.ApiResponse;
+import com.logging.dto.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;

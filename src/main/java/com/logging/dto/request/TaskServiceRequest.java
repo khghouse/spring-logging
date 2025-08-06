@@ -1,4 +1,4 @@
-package com.logging.request;
+package com.logging.dto.request;
 
 import com.logging.domain.Task;
 import lombok.AccessLevel;

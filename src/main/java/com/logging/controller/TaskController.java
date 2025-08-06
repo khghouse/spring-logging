@@ -1,8 +1,8 @@
 package com.logging.controller;
 
-import com.logging.request.TaskRequest;
-import com.logging.response.ApiResponse;
-import com.logging.response.TaskResponse;
+import com.logging.dto.request.TaskRequest;
+import com.logging.dto.ApiResponse;
+import com.logging.dto.response.TaskResponse;
 import com.logging.service.TaskService;
 import com.logging.validation.OnCreate;
 import com.logging.validation.OnUpdate;

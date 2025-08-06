@@ -3,6 +3,8 @@ package com.logging.filter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.logging.dto.RequestContext;
+import com.logging.matcher.LogExclusionMatcher;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,22 +27,18 @@ import java.util.Set;
  * 운영 환경에서는 예외 발생 시에만 로깅합니다.
  */
 @Slf4j
-public abstract class RequestResponseLoggingFilter extends OncePerRequestFilter {
+public abstract class AbstractRequestResponseLoggingFilter extends OncePerRequestFilter {
 
     private static final Set<String> MASKING_FIELDS = Set.of("description");
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    abstract boolean shouldLogRequestResponse(HttpServletRequest request, HttpServletResponse response);
+    abstract boolean isLogRequestResponse(HttpServletRequest request, HttpServletResponse response);
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String uri = request.getRequestURI();
-        String method = request.getMethod();
-
-        if ("GET".equalsIgnoreCase(method) && "/actuator/prometheus".equals(uri)) {
-            filterChain.doFilter(request, response);
+        if (LogExclusionMatcher.shouldSkipLogging(request)) {
             return;
         }
 
@@ -48,10 +46,12 @@ public abstract class RequestResponseLoggingFilter extends OncePerRequestFilter 
         ContentCachingResponseWrapper wrappedResponse = new ContentCachingResponseWrapper(response);
 
         try {
+            if (isLogRequestResponse(request, response)) {
+                logRequest(wrappedRequest);
+            }
             filterChain.doFilter(wrappedRequest, wrappedResponse);
         } finally {
-            if (shouldLogRequestResponse(request, response)) {
-                logRequest(wrappedRequest);
+            if (isLogRequestResponse(request, response)) {
                 logResponse(wrappedResponse);
             }
             wrappedResponse.copyBodyToResponse();
@@ -61,11 +61,11 @@ public abstract class RequestResponseLoggingFilter extends OncePerRequestFilter 
     private void logRequest(ContentCachingRequestWrapper request) {
         String body = new String(request.getContentAsByteArray(), StandardCharsets.UTF_8);
         String prettyBody = toPrettyJson(body);
-
+        RequestContext requestContext = new RequestContext(request);
         if (prettyBody.isEmpty()) {
-            log.info(">>> {} {}", request.getMethod(), request.getRequestURI());
+            log.info(">>> {} {}", requestContext.getMethod(), requestContext.getFullUri());
         } else {
-            log.info(">>> {} {}\n{}", request.getMethod(), request.getRequestURI(), prettyBody);
+            log.info(">>> {} {}\n{}", requestContext.getMethod(), requestContext.getFullUri(), prettyBody);
         }
     }
 
@@ -78,7 +78,6 @@ public abstract class RequestResponseLoggingFilter extends OncePerRequestFilter 
         } else {
             log.info("<<< {}\n{}", HttpStatus.valueOf(response.getStatus()), prettyBody);
         }
-
     }
 
     private String toPrettyJson(String json) {

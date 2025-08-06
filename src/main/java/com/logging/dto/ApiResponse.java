@@ -1,4 +1,4 @@
-package com.logging.response;
+package com.logging.dto;
 
 import com.logging.enumeration.ErrorCode;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package com.logging.response;
+package com.logging.dto.response;
 
 import com.logging.domain.Task;
 
