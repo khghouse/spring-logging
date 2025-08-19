@@ -33,7 +33,7 @@ public abstract class AbstractRequestResponseLoggingFilter extends OncePerReques
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    abstract boolean isLogRequestResponse(HttpServletRequest request, HttpServletResponse response);
+    abstract boolean shouldLogRequestResponse(HttpServletRequest request, HttpServletResponse response);
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -46,12 +46,10 @@ public abstract class AbstractRequestResponseLoggingFilter extends OncePerReques
         ContentCachingResponseWrapper wrappedResponse = new ContentCachingResponseWrapper(response);
 
         try {
-            if (isLogRequestResponse(request, response)) {
-                logRequest(wrappedRequest);
-            }
             filterChain.doFilter(wrappedRequest, wrappedResponse);
         } finally {
-            if (isLogRequestResponse(request, response)) {
+            if (shouldLogRequestResponse(request, response)) {
+                logRequest(wrappedRequest);
                 logResponse(wrappedResponse);
             }
             wrappedResponse.copyBodyToResponse();

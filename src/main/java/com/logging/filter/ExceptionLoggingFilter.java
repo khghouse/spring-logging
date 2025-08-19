@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class ExceptionLoggingFilter extends AbstractRequestResponseLoggingFilter {
 
     @Override
-    boolean isLogRequestResponse(HttpServletRequest request, HttpServletResponse response) {
+    boolean shouldLogRequestResponse(HttpServletRequest request, HttpServletResponse response) {
         return response.getStatus() >= 400;
     }
 

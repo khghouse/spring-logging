@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class StandardLoggingFilter extends AbstractRequestResponseLoggingFilter {
 
     @Override
-    boolean isLogRequestResponse(HttpServletRequest request, HttpServletResponse response) {
+    boolean shouldLogRequestResponse(HttpServletRequest request, HttpServletResponse response) {
         return true;
     }
 
