@@ -3,7 +3,7 @@
 
     <!-- 로그 저장 위치 및 파일명 -->
     <property name="LOG_PATH" value="./logs"/>
-    <property name="LOG_FILE" value="board"/>
+    <property name="LOG_FILE" value="logging"/>
 
     <!-- 색상 변환기 등록 -->
     <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
@@ -20,6 +20,7 @@
 
     <!-- 파일명 패턴 -->
     <property name="FILE_NAME_PATTERN" value="${LOG_PATH}/%d{yyyy-MM-dd}.${LOG_FILE}.%i.log"/>
+    <property name="JSON_FILE_NAME_PATTERN" value="${LOG_PATH}/%d{yyyy-MM-dd}.${LOG_FILE}.%i.json"/>
 
     <!-- Spring Profile: local, test -->
     <springProfile name="local,test">
@@ -52,7 +53,7 @@
         <!-- 파일 Appender -->
         <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
             <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-                <fileNamePattern>${FILE_NAME_PATTERN}</fileNamePattern> <!-- 파일명: yyyy-MM-dd.board.i.log -->
+                <fileNamePattern>${FILE_NAME_PATTERN}</fileNamePattern>
                 <maxFileSize>100MB</maxFileSize> <!-- 하루 단위 + 파일당 최대 100MB -->
                 <maxHistory>7</maxHistory> <!-- 로컬 보관 7일 -->
                 <totalSizeCap>1GB</totalSizeCap> <!-- 전체 용량 제한 -->
@@ -65,9 +66,45 @@
             </encoder>
         </appender>
 
+        <!-- JSON 형태로 파일에 저장 (Loki용) -->
+        <appender name="JSON_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_PATH}/${LOG_FILE}.json</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <fileNamePattern>${JSON_FILE_NAME_PATTERN}</fileNamePattern>
+                <maxFileSize>100MB</maxFileSize>
+                <maxHistory>7</maxHistory>
+                <totalSizeCap>1GB</totalSizeCap>
+            </rollingPolicy>
+            <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+                <providers>
+                    <timestamp>
+                        <timeZone>Asia/Seoul</timeZone>
+                    </timestamp>
+                    <version/>
+                    <logLevel/>
+                    <message/>
+                    <mdc/>
+                    <arguments/>
+                    <stackTrace/>
+                    <pattern>
+                        <pattern>
+                            {
+                            "service": "logging-service",
+                            "environment": "${spring.profiles.active:-unknown}",
+                            "thread": "%thread",
+                            "logger": "%logger{36}",
+                            "pid": "${PID:-}"
+                            }
+                        </pattern>
+                    </pattern>
+                </providers>
+            </encoder>
+        </appender>
+
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="FILE"/>
+            <appender-ref ref="JSON_FILE"/>
         </root>
 
         <!-- Hibernate SQL만 DEBUG, 바인딩 값은 출력 안 함 -->
